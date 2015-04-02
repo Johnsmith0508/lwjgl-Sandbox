@@ -1,0 +1,53 @@
+/**
+ * the folowing vars must be edited by the user
+ * they should be more or less self explanitory
+ */
+//BEGIN EDITABLE VARS
+version = '1.0'
+String ArchiveBaseName = 'LwjglTest'//what the file is saved as
+String MainClassName = 'ro.waldman.logan.Introduction'//what class do you want it to run
+//END EDITABLE VARS
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.5
+
+repositories {
+    maven {
+        url "http://repo1.maven.org/maven2"
+    }
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile 'org.lwjgl.lwjgl:lwjgl:2.9.3'
+    compile 'org.lwjgl.lwjgl:lwjgl_util:2.9.3'
+}
+
+jar {
+    baseName = ArchiveBaseName
+    manifest {
+        attributes 'Main-Class' : MainClassName
+    }
+}
+
+
+task getDepts(type: Copy) {
+    from sourceSets.main.compileClasspath
+    into 'compile/'
+}
+
+task zip(type: Zip, dependsOn: build) {
+    from 'src/main/java'
+}
+
+task mkIDEA{
+    println 'Finished getting depts for IDEA development'
+}
+task mkEclipse {
+    println 'Fineshed getting depts for Eclipse develpoment'
+}
+mkEclipse.dependsOn 'idea','getDepts'
+mkIDEA.dependsOn 'eclipse','getDepts'
